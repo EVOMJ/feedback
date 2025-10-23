@@ -198,4 +198,13 @@ def main(page: ft.Page):
     page.update()
 
 
-ft.app(target=main)
+    return ft.View(
+    route="/feedback",
+    controls=[       ft.Container(
+            content=feedback_view,
+            alignment=ft.alignment.center,
+            expand=True,
+        )],
+    vertical_alignment="center",
+    horizontal_alignment="center",
+        )
