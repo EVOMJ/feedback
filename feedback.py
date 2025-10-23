@@ -50,6 +50,8 @@ def feedback_view(page: ft.Page):
             print("Abrir configurações...")
         elif item == "TEMA":
             mudar_tema(None)
+        elif item == "FEEDBACK"
+            print("FEEDBACK")
         elif item == "SAIR":
             print("Encerrar aplicação...")
 
@@ -172,6 +174,7 @@ def feedback_view(page: ft.Page):
                     ft.PopupMenuButton(
                         items=[
                             ft.PopupMenuItem(text="TEMA", icon="WB_SUNNY_OUTLINED", on_click=mudar_tema),
+                            ft.PopupMenuItem(text="FEEDBACK", icon="FEEDBACK", on_click=clicou_menu),
                             ft.PopupMenuItem(text="ACESSIBILIDADE", icon="ACCESSIBILITY", on_click=clicou_menu),
                             ft.PopupMenuItem(text="CONFIGURAÇÕES", icon="SETTINGS_OUTLINED", on_click=clicou_menu),
                             ft.PopupMenuItem(text="SUPORTE", icon="HELP_OUTLINE_ROUNDED", on_click=clicou_menu),
