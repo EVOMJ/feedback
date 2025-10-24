@@ -69,7 +69,6 @@ def feedback_view(page: ft.Page):
     def enviar_click(e=None):
         global avaliacao_enviada
 
-        # Cria o snackbar dependendo da situação
         if rating["nota"] == 0:
             # ⚠️ Erro: nenhuma avaliação
             page.snack_bar = ft.SnackBar(
@@ -95,14 +94,12 @@ def feedback_view(page: ft.Page):
                 behavior=ft.SnackBarBehavior.FLOATING,
                 open=True
             )
-
             comentario.value = ""
             rating["nota"] = 0
             for s in stars:
                 s.icon = "star_outline"
             nota_text.value = ""
 
-        # Exibe o snackbar corretamente
         page.update()
 
     # ---------- Tema ----------
@@ -128,9 +125,16 @@ def feedback_view(page: ft.Page):
         page.update()
 
     # ---------- Elementos ----------
+    logo = ft.Image(
+        src="LOGO.jpg.png",  
+        width=210,
+        height=180,
+        fit=ft.ImageFit.CONTAIN
+    )
+
     texto_avaliacaoo = ft.Text(
         "O feedback do aluno serve para avaliar como foi seu dia em aula, identificar se está tudo bem e receber sugestões que possam contribuir para as atividades em sala. Dessa forma, busca-se promover uma maior aproximação entre aluno e professor, fortalecendo a harmonia no ensino.",
-        size=15,
+        size=13,
         weight="bold",
         text_align=ft.TextAlign.JUSTIFY,
         opacity=1.,
@@ -138,8 +142,8 @@ def feedback_view(page: ft.Page):
     )
 
     texto_avaliacao = ft.Text(
-        "Como você avalia nosso App?",
-        size=22,
+        "Como você avalia o App ",
+        size=19,
         weight="bold",
         text_align=ft.TextAlign.CENTER,
     )
@@ -169,6 +173,7 @@ def feedback_view(page: ft.Page):
 
     conteudo = ft.Column(
         [
+            logo,  # <-- Logo adicionada no topo
             texto_avaliacaoo,
             texto_avaliacao,
             estrela_row,
