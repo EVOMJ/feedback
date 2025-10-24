@@ -10,13 +10,13 @@ def criar_estrelas(on_change):
     def on_click_star(e):
         rating["nota"] = e.control.data
         for s in stars:
-            s.icon = "star" if s.data <= rating["nota"] else "star_outline"
+            s.icon = ft.Icons.STAR if s.data <= rating["nota"] else ft.Icons.STAR_OUTLINE
         on_change(rating["nota"])
         e.page.update()
 
     for i in range(1, 6):
         star = ft.IconButton(
-            icon="star_outline",
+            icon=ft.Icons.STAR_OUTLINE,
             icon_color=ft.Colors.AMBER_400,
             icon_size=50,
             data=i,
@@ -41,27 +41,10 @@ def feedback_view(page: ft.Page):
     page.window.max_height = 800
     page.padding = 0
 
-    # Cria um snack_bar inicial vazio
-    page.snack_bar = ft.SnackBar(content=ft.Text(""), open=False)
-
-    # ---------- Funções de menu ----------
-    def clicou_menu(e):
-        item = e.control.text.upper()
-        if item == "SUPORTE":
-            print("Abrir suporte...")
-        elif item == "CONFIGURAÇÕES":
-            print("Abrir configurações...")
-        elif item == "TEMA":
-            mudar_tema(None)
-        elif item == "FEEDBACK":
-            print("Abrir feedback...")
-        elif item == "SAIR":
-            print("Encerrar aplicação...")
-
+    # ---------- Funções ----------
     def voltar_home(e):
         page.go("/home")
 
-    # ---------- Funções de avaliação ----------
     def on_rating_change(nota):
         nota_text.value = f"{nota} estrela{'s' if nota > 1 else ''}"
         page.update()
@@ -70,39 +53,35 @@ def feedback_view(page: ft.Page):
         global avaliacao_enviada
 
         if rating["nota"] == 0:
-            # ⚠️ Erro: nenhuma avaliação
-            page.snack_bar = ft.SnackBar(
-                content=ft.Row([
-                    ft.Icon(name="error_outline", color="white"),
-                    ft.Text("Selecione uma avaliação antes de enviar!", color="white")
-                ]),
-                bgcolor=ft.Colors.RED_600,
-                duration=3000,
-                behavior=ft.SnackBarBehavior.FLOATING,
-                open=True
+            page.open(
+                ft.SnackBar(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.ERROR_OUTLINE, color="white"),
+                        ft.Text("Selecione uma avaliação antes de enviar!", color="white")
+                    ]),
+                    bgcolor=ft.Colors.RED_600,
+                    duration=3000
+                )
             )
         else:
-            # ✅ Sucesso
             avaliacao_enviada = rating["nota"]
-            page.snack_bar = ft.SnackBar(
-                content=ft.Row([
-                    ft.Icon(name="check_circle_outline", color="white"),
-                    ft.Text("Sua mensagem foi enviada com sucesso!", color="white")
-                ]),
-                bgcolor=ft.Colors.GREEN_600,
-                duration=3000,
-                behavior=ft.SnackBarBehavior.FLOATING,
-                open=True
+            page.open(
+                ft.SnackBar(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.CHECK_CIRCLE_OUTLINE, color="white"),
+                        ft.Text("Sua mensagem foi enviada com sucesso!", color="white")
+                    ]),
+                    bgcolor=ft.Colors.GREEN_600,
+                    duration=3000
+                )
             )
             comentario.value = ""
             rating["nota"] = 0
             for s in stars:
-                s.icon = "star_outline"
+                s.icon = ft.Icons.STAR_OUTLINE
             nota_text.value = ""
-
         page.update()
 
-    # ---------- Tema ----------
     def mudar_tema(e=None):
         page.theme_mode = (
             ft.ThemeMode.LIGHT
@@ -126,9 +105,9 @@ def feedback_view(page: ft.Page):
 
     # ---------- Elementos ----------
     logo = ft.Image(
-        src="LOGO.jpg.png",  
+        src="LOGO.jpg.png",
         width=210,
-        height=180,
+        height=160,
         fit=ft.ImageFit.CONTAIN
     )
 
@@ -137,7 +116,6 @@ def feedback_view(page: ft.Page):
         size=13,
         weight="bold",
         text_align=ft.TextAlign.JUSTIFY,
-        opacity=1.,
         width=400,
     )
 
@@ -167,13 +145,13 @@ def feedback_view(page: ft.Page):
         label="Conte-nos sua experiência (opcional)",
         multiline=True,
         min_lines=3,
-        max_lines=5,
+        max_lines=6,
         width=360
     )
 
     conteudo = ft.Column(
         [
-            logo,  # <-- Logo adicionada no topo
+            logo,
             texto_avaliacaoo,
             texto_avaliacao,
             estrela_row,
@@ -181,7 +159,7 @@ def feedback_view(page: ft.Page):
             comentario,
             ft.ElevatedButton(
                 "Enviar",
-                icon="send",
+                icon=ft.Icons.SEND,
                 on_click=enviar_click,
                 bgcolor=ft.Colors.BLUE_600,
                 color=ft.Colors.WHITE,
@@ -195,10 +173,8 @@ def feedback_view(page: ft.Page):
         expand=True
     )
 
-    # ---------- Cor do AppBar ----------
     card_color = ft.Colors.BLUE_700 if page.theme_mode == ft.ThemeMode.DARK else ft.Colors.BLUE_300
 
-    # ---------- Retorno da View ----------
     return ft.View(
         route="/feedback",
         controls=[
@@ -215,13 +191,13 @@ def feedback_view(page: ft.Page):
                 actions=[
                     ft.PopupMenuButton(
                         items=[
-                            ft.PopupMenuItem(text="TEMA", icon="WB_SUNNY_OUTLINED", on_click=mudar_tema),
-                            ft.PopupMenuItem(text="FEEDBACK", icon="FEEDBACK", on_click=clicou_menu),
-                            ft.PopupMenuItem(text="ACESSIBILIDADE", icon="ACCESSIBILITY", on_click=clicou_menu),
-                            ft.PopupMenuItem(text="CONFIGURAÇÕES", icon="SETTINGS_OUTLINED", on_click=clicou_menu),
-                            ft.PopupMenuItem(text="SUPORTE", icon="HELP_OUTLINE_ROUNDED", on_click=clicou_menu),
+                            ft.PopupMenuItem(text="TEMA", icon=ft.Icons.WB_SUNNY_OUTLINED, on_click=mudar_tema),
+                            ft.PopupMenuItem(text="FEEDBACK", icon=ft.Icons.FEEDBACK, on_click=lambda e: print("Feedback")),
+                            ft.PopupMenuItem(text="ACESSIBILIDADE", icon=ft.Icons.ACCESSIBILITY, on_click=lambda e: print("Acessibilidade")),
+                            ft.PopupMenuItem(text="CONFIGURAÇÕES", icon=ft.Icons.SETTINGS_OUTLINED, on_click=lambda e: print("Configurações")),
+                            ft.PopupMenuItem(text="SUPORTE", icon=ft.Icons.HELP_OUTLINE_ROUNDED, on_click=lambda e: print("Suporte")),
                             ft.PopupMenuItem(),
-                            ft.PopupMenuItem(text="SAIR", icon="CLOSE_ROUNDED", on_click=clicou_menu),
+                            ft.PopupMenuItem(text="SAIR", icon=ft.Icons.CLOSE_ROUNDED, on_click=lambda e: print("Sair")),
                         ]
                     ),
                 ],
