@@ -41,6 +41,9 @@ def feedback_view(page: ft.Page):
     page.window.max_height = 800
     page.padding = 0
 
+    # Cria um snack_bar inicial vazio
+    page.snack_bar = ft.SnackBar(content=ft.Text(""), open=False)
+
     # ---------- Funções de menu ----------
     def clicou_menu(e):
         item = e.control.text.upper()
@@ -50,8 +53,8 @@ def feedback_view(page: ft.Page):
             print("Abrir configurações...")
         elif item == "TEMA":
             mudar_tema(None)
-        elif == "FEEDBACK" :
-            print ( "Abrir feedback..." )    
+        elif item == "FEEDBACK":
+            print("Abrir feedback...")
         elif item == "SAIR":
             print("Encerrar aplicação...")
 
@@ -65,31 +68,41 @@ def feedback_view(page: ft.Page):
 
     def enviar_click(e=None):
         global avaliacao_enviada
+
+        # Cria o snackbar dependendo da situação
         if rating["nota"] == 0:
-            snack = ft.SnackBar(
-                content=ft.Text("⚠️ Selecione uma avaliação!", color="white"),
+            # ⚠️ Erro: nenhuma avaliação
+            page.snack_bar = ft.SnackBar(
+                content=ft.Row([
+                    ft.Icon(name="error_outline", color="white"),
+                    ft.Text("Selecione uma avaliação antes de enviar!", color="white")
+                ]),
                 bgcolor=ft.Colors.RED_600,
-                open=True,
-                duration=3000
+                duration=3000,
+                behavior=ft.SnackBarBehavior.FLOATING,
+                open=True
             )
         else:
+            # ✅ Sucesso
             avaliacao_enviada = rating["nota"]
-            snack = ft.SnackBar(
-                content=ft.Text(
-                    f"✅ Avaliação {rating['nota']} estrela{'s' if rating['nota'] > 1 else ''} enviada!",
-                    color="white"
-                ),
+            page.snack_bar = ft.SnackBar(
+                content=ft.Row([
+                    ft.Icon(name="check_circle_outline", color="white"),
+                    ft.Text("Sua mensagem foi enviada com sucesso!", color="white")
+                ]),
                 bgcolor=ft.Colors.GREEN_600,
-                open=True,
-                duration=3000
+                duration=3000,
+                behavior=ft.SnackBarBehavior.FLOATING,
+                open=True
             )
+
             comentario.value = ""
             rating["nota"] = 0
             for s in stars:
                 s.icon = "star_outline"
             nota_text.value = ""
-        page.snack_bar = snack
-        page.snack_bar.open = True
+
+        # Exibe o snackbar corretamente
         page.update()
 
     # ---------- Tema ----------
@@ -105,16 +118,39 @@ def feedback_view(page: ft.Page):
         if page.theme_mode == ft.ThemeMode.DARK:
             page.bgcolor = ft.Colors.BLUE_500
             texto_avaliacao.color = ft.Colors.WHITE
+            texto_avaliacaoo.color = ft.Colors.WHITE70
             nota_text.color = ft.Colors.AMBER_400
         else:
             page.bgcolor = ft.Colors.BLUE_100
             texto_avaliacao.color = ft.Colors.BLACK
+            texto_avaliacaoo.color = ft.Colors.BLACK54
             nota_text.color = ft.Colors.AMBER_800
         page.update()
 
     # ---------- Elementos ----------
-    nota_text = ft.Text("", size=18, weight="bold", color=ft.Colors.AMBER_400)
-    texto_avaliacao = ft.Text("Como você avalia nosso App?", size=22, weight="bold")
+    texto_avaliacaoo = ft.Text(
+        "O feedback do aluno serve para avaliar como foi seu dia em aula, identificar se está tudo bem e receber sugestões que possam contribuir para as atividades em sala. Dessa forma, busca-se promover uma maior aproximação entre aluno e professor, fortalecendo a harmonia no ensino.",
+        size=15,
+        weight="bold",
+        text_align=ft.TextAlign.JUSTIFY,
+        opacity=1.,
+        width=400,
+    )
+
+    texto_avaliacao = ft.Text(
+        "Como você avalia nosso App?",
+        size=22,
+        weight="bold",
+        text_align=ft.TextAlign.CENTER,
+    )
+
+    nota_text = ft.Text(
+        "",
+        size=14,
+        weight="bold",
+        color=ft.Colors.AMBER_400,
+        opacity=0.20,
+    )
 
     stars, rating = criar_estrelas(on_rating_change)
 
@@ -133,6 +169,7 @@ def feedback_view(page: ft.Page):
 
     conteudo = ft.Column(
         [
+            texto_avaliacaoo,
             texto_avaliacao,
             estrela_row,
             nota_text,
@@ -174,7 +211,7 @@ def feedback_view(page: ft.Page):
                     ft.PopupMenuButton(
                         items=[
                             ft.PopupMenuItem(text="TEMA", icon="WB_SUNNY_OUTLINED", on_click=mudar_tema),
-                            ft.PopupMenuItem ( texto = "FEEDBACK" , ícone = "FEEDBACK" , on_click = clicou_menu ),
+                            ft.PopupMenuItem(text="FEEDBACK", icon="FEEDBACK", on_click=clicou_menu),
                             ft.PopupMenuItem(text="ACESSIBILIDADE", icon="ACCESSIBILITY", on_click=clicou_menu),
                             ft.PopupMenuItem(text="CONFIGURAÇÕES", icon="SETTINGS_OUTLINED", on_click=clicou_menu),
                             ft.PopupMenuItem(text="SUPORTE", icon="HELP_OUTLINE_ROUNDED", on_click=clicou_menu),
@@ -187,7 +224,7 @@ def feedback_view(page: ft.Page):
             ft.Container(
                 content=conteudo,
                 expand=True,
-                alignment=ft.alignment.center,  # centraliza vertical e horizontalmente
+                alignment=ft.alignment.center,
                 padding=20,
             ),
         ],
