@@ -4,28 +4,33 @@ avaliacao_enviada = 0
 
 # ---------- Função para criar estrelas ----------
 def criar_estrelas(on_change):
-    stars = []
-    rating = {"nota": 0}
+    stars = []                  # Lista que vai armazenar os botões de estrela
+    rating = {"nota": 0}        # Dicionário para guardar a nota selecionada
 
     def on_click_star(e):
-        rating["nota"] = e.control.data
+        rating["nota"] = e.control.data  # Atualiza a nota com a estrela clicada
         for s in stars:
-            s.icon = ft.Icons.STAR if s.data <= rating["nota"] else ft.Icons.STAR_OUTLINE
-        on_change(rating["nota"])
-        e.page.update()
+            # ✅ Se a estrela estiver dentro da nota selecionada, fica âmbar
+            # ❌ Se não, fica cinza
+            s.icon = "star" if s.data <= rating["nota"] else "star_outline"
+            s.icon_color = ft.Colors.AMBER_400 if s.data <= rating["nota"] else ft.Colors.GREY_400
+        on_change(rating["nota"])  # Atualiza a interface que mostra o número de estrelas
+        e.page.update()             # Atualiza a tela
 
     for i in range(1, 6):
         star = ft.IconButton(
-            icon=ft.Icons.STAR_OUTLINE,
-            icon_color=ft.Colors.AMBER_400,
-            icon_size=50,
-            data=i,
+            icon="star_outline",        # Começa vazia (cinza)
+            icon_color=ft.Colors.GREY_400, # Cor inicial cinza
+            icon_size=55,
+            data=i,                     # Guarda o número da estrela
             tooltip=f"{i} estrela{'s' if i > 1 else ''}",
-            on_click=on_click_star
+            on_click=on_click_star,
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=12))
         )
         stars.append(star)
 
     return stars, rating
+
 
 
 # ---------- Tela de Feedback ----------
@@ -40,7 +45,8 @@ def feedback_view(page: ft.Page):
     page.window.max_width = 500
     page.window.max_height = 800
     page.padding = 0
-
+    
+    
     # ---------- Funções ----------
     def voltar_home(e):
         page.go("/home")
